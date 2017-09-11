@@ -77,10 +77,12 @@ else{
   
   temp2<-c(Variable="",V2="")
   
-  if(single==F){
-  t<-suppressWarnings(data.frame(rbind(temp2,cbind(Variable=rownames(temp),V2=temp1))))
-  }
-  else{t<-suppressWarnings(data.frame(Variable=paste(label(y),rownames(temp)[2]),V2=temp1[2]))}
+  if(length(levels(y))<3 & single==T){
+    t<-suppressWarnings(data.frame(Variable="",V2=temp1[2]))
+    }
+  
+  else{t<-suppressWarnings(data.frame(rbind(temp2,cbind(Variable=rownames(temp),V2=temp1))))
+      }
 }
  
 return(t)  
