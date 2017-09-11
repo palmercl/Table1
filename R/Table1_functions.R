@@ -59,14 +59,12 @@ if(length(levels(x))>1){
   
   if(length(levels(y))<3 & single==T){
     
-    t<-data.frame(rbind(temp2,c(Variable="",
-                                temp1[2],paste0(temp[2,]," (",temp.prop[2,],"%)"),Pval=p)))[2,]
+    t<-data.frame(rbind(temp2,c(Variable="",temp1[2],paste0(temp[2,]," (",temp.prop[2,],"%)"),Pval=p)))[2,]
   }
   
   else{
     for(i in (1:nrow(temp))){
-      temp2<-rbind(temp2,c(Variable=rownames(temp)[i],temp1[i],
-                           paste0(temp[i,]," (",temp.prop[i,],"%)"),Pval=" "))
+      temp2<-rbind(temp2,c(Variable=rownames(temp)[i],temp1[i],paste0(temp[i,]," (",temp.prop[i,],"%)"),Pval=" "))
       } 
     t<-data.frame(temp2,row.names=NULL)
   }
@@ -76,10 +74,13 @@ t$Pval[t$Pval==0]<-"<0.0001"
 }
 
 else{
+  
+  temp2<-c(Variable="",V2="")
+  
   if(single==F){
-  t<-data.frame(Variable=rownames(temp),temp1)
+  t<-suppressWarnings(data.frame(rbind(temp2,cbind(Variable=rownames(temp),V2=temp1))))
   }
-  else{t<-data.frame(Variable=rownames(temp),V2=temp1)[2,]}
+  else{t<-suppressWarnings(data.frame(Variable=paste(label(y),rownames(temp)[2]),V2=temp1[2]))}
 }
  
 return(t)  
