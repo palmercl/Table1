@@ -29,7 +29,12 @@ prop_row<-function(y,x,margin,single) {
   
 temp<-table(y,x)
 temp.prop<-round(prop.table(temp,margin)*100,0)
-temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
+
+if (length(levels(x))>1){
+    temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
+}
+
+else{temp.expect=NULL}
 
 if(length(levels(x))>1){
     
@@ -244,6 +249,8 @@ fx_rows<-function(variable,group,margin,single,ron,summary.stat){
 #' fx_symbol()
 fx_symbol<-function(y,x){
   
+  if(length(levels(x))>1){
+  
   temp<-table(y,x)
   temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
   
@@ -254,7 +261,11 @@ fx_symbol<-function(y,x){
   else{
     symbol<-""
     }
+  }
   
+  else{
+    symbol<-""
+  }
   return(symbol)
 }
 ##################################################################################################
