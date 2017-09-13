@@ -34,15 +34,11 @@ temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
 if(length(levels(x))>1){
     
     if(temp.expect==0){
-      
       p<-round(chisq.test(temp)$p.value,4)
-    
       }
   
     else{
-      
       p<-round(fisher.test(temp)$p.value,4)
-      
       }
 }
 
