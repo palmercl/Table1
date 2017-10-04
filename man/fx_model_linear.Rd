@@ -17,7 +17,7 @@ fx_model_linear(y, x, data)
 A function to create a summary of a linear regression model.
 }
 \details{
-Table with estimates, 95% CIs and p-values.
+Table with estimates, CIs and p-values.
 }
 \examples{
 iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)

@@ -1,5 +1,5 @@
-#library(devtools)
-#library(roxygen2)
+# library(devtools)
+# library(roxygen2)
 
 ####################################################################################################
 #####################################   Row Functions for n groups       ###########################
@@ -251,20 +251,35 @@ fx_symbol<-function(y,x){
   
   if(length(levels(x))>1){
   
-  temp<-table(y,x)
-  temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
+    if(is.numeric(y)==F){
   
-  if(is.numeric(y)==F & temp.expect!=0){
-    symbol<-"*"
-    }
+      temp<-table(y,x)
+      temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
+      
+        if(temp.expect!=0){
+        symbol<-"**"
+        }
+        
+        else{symbol<-""}
+      }
     
-  else{
-    symbol<-""
-    }
+      else if(is.numeric(y)==T & abs(moments::skewness(y,na.rm=T))>3){ 
+          
+        symbol<-"**"
+      }
   }
+    
+  else{ 
   
-  else{
-    symbol<-""
+    if(is.numeric(y)==T){ 
+       
+      if(abs(moments::skewness(y,na.rm=T))>3){ 
+        symbol<-"**"
+      }
+      else{symbol<-""}
+    }
+  
+    else{symbol<-""}
   }
   return(symbol)
 }
@@ -289,7 +304,8 @@ fx_symbol<-function(y,x){
 #' for continuous variables with skewness <=3. Chi-squared or Fisher's Exact (for expected cell value <5) performed 
 #' for categorical variables. Fisher's exact test is indicated by * next to variable name. One summary column in the case of a single group.    
 #' @export
-#' @examples iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
+#' @examples 
+#' iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
 #' #set factor levels
 #' levels(iris$sepal_di)=c("<5",'>=5')
 #' levels(iris$Species)=c('Setosa','Versicolor','Virginica')
@@ -305,7 +321,7 @@ final_table<-function(data,variables,group,margin=2,single=F,ron, col.names=T, s
   #create table
   temp<-data.frame(do.call(rbind,lapply(data[variables],fx_rows,group,margin,single,ron,summary.stat)),row.names=NULL)
   temp$Variable<-as.character(temp$Variable)
-  temp$Variable[temp$Variable==""]<-paste0(Hmisc::label(data[variables]),lapply(data[(variables)],fx_symbol,group))
+  temp$Variable[temp$Variable==""]<-paste0('**',Hmisc::label(data[variables]),lapply(data[(variables)],fx_symbol,group),'**')
  
   #remove numbering from factor levels
   temp$Variable<-gsub(".*\\^", "", temp$Variable)
@@ -407,9 +423,9 @@ dist_check<-function(var1){
 label_fx<-function(x){
   
   if(is.numeric(x)==T) {
-    lab<-label(x)
+    lab<-Hmisc::label(x)
   }
-  else{lab<-paste(label(x),'-',names(table(x))[-1])
+  else{lab<-paste(Hmisc::label(x),'-',names(table(x))[-1])
   }
 }
 
@@ -421,7 +437,7 @@ label_fx<-function(x){
 #' @param x a single explanatory variable, or multiple variables separated by +, in quotation marks.  
 #' @param data a data frame containing the variables listed in x and y.  
 #' @keywords Linear regression, summary table
-#' @details Table with estimates, 95% CIs and p-values.  
+#' @details Table with estimates, CIs and p-values.  
 #' @export
 #' @examples 
 #' iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
@@ -463,7 +479,7 @@ fx_model_linear<-function(y,x,data){
 #' @param x a single explanatory variable, or multiple variables separated by +, in quotation marks.  
 #' @param data a data frame containing the variables listed in x and y.  
 #' @keywords Linear regression, summary table
-#' @details Table with estimates, 95% CIs and p-values.  
+#' @details Table with estimates, CIs and p-values.  
 #' @export
 #' @examples 
 #' iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
