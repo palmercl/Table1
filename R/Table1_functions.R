@@ -1,5 +1,5 @@
-# library(devtools)
-# library(roxygen2)
+#library(devtools)
+#library(roxygen2)
 
 ####################################################################################################
 #####################################   Row Functions for n groups       ###########################
@@ -296,7 +296,7 @@ fx_symbol<-function(y,x){
 #' #Set Labels
 #' label(iris$sepal_di)='Sepal Length'
 #' label(iris$Sepal.Length)="Sepal Length"
-#' label(iris$Sepal.Width)='Sepal weight'
+#' label(iris$Sepal.Width)='Sepal Width'
 #' label(iris$Petal.Length)='Petal Length'
 #' label(iris$Petal.Width)='Petal Width'
 #' tab1<-final_table(iris,c('Sepal.Length','Petal.Length','Sepal.Width','Petal.Width','sepal_di'),iris$Species,1,T,2)
@@ -360,7 +360,7 @@ missing_row<-function(y,x){
 #' #Set Labels
 #' label(iris$sepal_di)='Sepal Length'
 #' label(iris$Sepal.Length)="Sepal Length"
-#' label(iris$Sepal.Width)='Sepal weight'
+#' label(iris$Sepal.Width)='Sepal Width'
 #' label(iris$Petal.Length)='Petal Length'
 #' label(iris$Petal.Width)='Petal Width'
 #' tab_miss<-missing_table(iris,c('Sepal.Length','Petal.Length','Sepal.Width','Petal.Width','sepal_di'),iris$Species)
@@ -400,6 +400,101 @@ dist_check<-function(var1){
   
   return(list(mean=avg,geom_mean=avg_exp,median=med,missing=miss,minimum=m,maximum=M))
 }
+
+####################################################
+########      Regression Models     #############
+####################################################
+label_fx<-function(x){
+  
+  if(is.numeric(x)==T) {
+    lab<-label(x)
+  }
+  else{lab<-paste(label(x),'-',names(table(x))[-1])
+  }
+}
+
+####################################################
+########      Linear regression      #############
+####################################################
+#' A function to create a summary of a linear regression model.
+#' @param y outcome variable of interest to be pasted in formula, in quotation marks.  
+#' @param x a single explanatory variable, or multiple variables separated by +, in quotation marks.  
+#' @param data a data frame containing the variables listed in x and y.  
+#' @keywords Linear regression, summary table
+#' @details Table with estimates, 95% CIs and p-values.  
+#' @export
+#' @examples 
+#' iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
+#' #set factor levels
+#' levels(iris$sepal_di)=c("<5",'>=5')
+#' levels(iris$Species)=c('Setosa','Versicolor','Virginica')
+#' #Set Labels
+#' label(iris$Species)='Species'
+#' label(iris$sepal_di)='Sepal Length'
+#' label(iris$Sepal.Length)="Sepal Length"
+#' label(iris$Sepal.Width)='Sepal Width'
+#' label(iris$Petal.Length)='Petal Length'
+#' label(iris$Petal.Width)='Petal Width'
+#' mod_tab<-fx_model_linear('Sepal.Length',c('Species','Petal.Length'),iris)
+
+fx_model_linear<-function(y,x,data){
+  
+  f<-formula(paste0(y,"~",paste0(x,collapse = '+')))
+  model<-lm(f,data)
+  
+  ret<-data.frame(Independent_variable=unlist(lapply(data[x],label_fx)),
+                  Estimate=paste0(round(coef(model)[-1],2)," (",
+                                  round(confint(model)[,1],2)[-1],", ",
+                                  round(confint(model)[,2],2)[-1],")"),
+                  Pvalue=round(summary(model)$coef[,4],4)[-1],
+                  row.names=NULL)
+  
+  ret$Pvalue[ret$Pvalue==0]<-'<0.0001'
+  colnames(ret)<-c("Predictor","Estimate (95% CI)","P Value")
+  return(ret)
+  
+}
+
+####################################################
+########      Logistic regression      #############
+####################################################
+#' A function to create a summary of a logistic regression model.
+#' @param y outcome variable of interest to be pasted in formula, in quotation marks.  
+#' @param x a single explanatory variable, or multiple variables separated by +, in quotation marks.  
+#' @param data a data frame containing the variables listed in x and y.  
+#' @keywords Linear regression, summary table
+#' @details Table with estimates, 95% CIs and p-values.  
+#' @export
+#' @examples 
+#' iris$sepal_di<-as.factor((iris$Sepal.Length<5)*1)
+#' #set factor levels
+#' levels(iris$sepal_di)=c("<5",'>=5')
+#' levels(iris$Species)=c('Setosa','Versicolor','Virginica')
+#' #Set Labels
+#' label(iris$Species)='Species'
+#' label(iris$sepal_di)='Sepal Length'
+#' label(iris$Sepal.Length)="Sepal Length"
+#' label(iris$Sepal.Width)='Sepal Width'
+#' label(iris$Petal.Length)='Petal Length'
+#' label(iris$Petal.Width)='Petal Width'
+#' mod_tab<-fx_model_logistic('sepal_di',c('Petal.Length','Petal.Width'),iris)
+fx_model_logistic<-function(y,x,data){
+  
+  f<-formula(paste0(y,"~",paste0(x,collapse = '+')))
+  model<-glm(f,data,family='binomial')
+  
+  ret<-data.frame(Independent_variable=unlist(lapply(data[x],label_fx)),
+                  OR=paste0(round(exp(coef(model)[-1]),2)," (",
+                            round(exp(confint(model)[,1]),2)[-1],", ",
+                            round(exp(confint(model)[,2]),2)[-1],")"),
+                  Pvalue=round(summary(model)$coef[,4],4)[-1],
+                  row.names=NULL)
+  
+  ret$Pvalue[ret$Pvalue==0]<-'<0.0001'
+  colnames(ret)<-c("Parameter","OR (95% CI)","P Value")
+  return(ret)
+}
+
 # #change documentation
 # setwd('..')
 # document()

@@ -3,6 +3,8 @@
 export(column_label)
 export(dist_check)
 export(final_table)
+export(fx_model_linear)
+export(fx_model_logistic)
 export(fx_rows)
 export(fx_symbol)
 export(mean_row)

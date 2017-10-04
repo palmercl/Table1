@@ -30,7 +30,7 @@ levels(iris$Species)=c('Setosa','Versicolor','Virginica')
 #Set Labels
 label(iris$sepal_di)='Sepal Length'
 label(iris$Sepal.Length)="Sepal Length"
-label(iris$Sepal.Width)='Sepal weight'
+label(iris$Sepal.Width)='Sepal Width'
 label(iris$Petal.Length)='Petal Length'
 label(iris$Petal.Width)='Petal Width'
 tab_miss<-missing_table(iris,c('Sepal.Length','Petal.Length','Sepal.Width','Petal.Width','sepal_di'),iris$Species)
