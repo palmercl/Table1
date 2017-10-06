@@ -37,7 +37,9 @@ if (length(levels(x))>1){
 else{temp.expect=NULL}
 
 if(length(levels(x))>1){
-    
+  
+    temp.expect<-sum((suppressWarnings(chisq.test(temp))$expected<5)*1)
+  
     if(temp.expect==0){
       p<-round(chisq.test(temp)$p.value,4)
       }
@@ -45,18 +47,20 @@ if(length(levels(x))>1){
     else{
       p<-round(fisher.test(temp)$p.value,4)
       }
-}
+  }
 
 else{
+  
   p<-NULL
-}
+
+  }
 
 temp1<-paste0(table(y), ' (',round(prop.table(table(y))*100,0), '%)')
 
 
 if(length(levels(x))>1){
  
-  temp2<-c(Variable="",c(rep("",ncol(temp)+1)),Pval=p)
+    temp2<-c(Variable="",c(rep("",ncol(temp)+1)),Pval=p)
   
   if(length(levels(y))<3 & single==T){
     
@@ -64,9 +68,11 @@ if(length(levels(x))>1){
   }
   
   else{
+    
     for(i in (1:nrow(temp))){
       temp2<-rbind(temp2,c(Variable=rownames(temp)[i],temp1[i],paste0(temp[i,]," (",temp.prop[i,],"%)"),Pval=" "))
       } 
+    
     t<-data.frame(temp2,row.names=NULL)
   }
   
@@ -265,8 +271,10 @@ fx_symbol<-function(y,x){
     
       else if(is.numeric(y)==T & abs(moments::skewness(y,na.rm=T))>3){ 
           
-        symbol<-"**"
+        symbol<-"*"
       }
+    
+    else{symbol<-""}
   }
     
   else{ 
@@ -274,13 +282,14 @@ fx_symbol<-function(y,x){
     if(is.numeric(y)==T){ 
        
       if(abs(moments::skewness(y,na.rm=T))>3){ 
-        symbol<-"**"
+        symbol<-"*"
       }
       else{symbol<-""}
     }
   
     else{symbol<-""}
   }
+  
   return(symbol)
 }
 ##################################################################################################
